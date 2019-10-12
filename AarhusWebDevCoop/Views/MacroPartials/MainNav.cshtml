@@ -1,0 +1,195 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using Umbraco.Web
+
+
+@*
+    This snippet displays a list of links of the pages immediately under the top-most page in the content tree.
+    This is the home page for a standard website.
+    It also highlights the current active page/section in the navigation with the CSS class "current".
+*@
+@*
+  @{
+
+<style>
+    .dropdown-menu{
+        opacity:0;
+        transition: all 0.2s linear;
+        display:block;
+       
+    }
+    .dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+    transition: all 0.2s linear;
+    opacity: 1;
+ }
+</style> 
+
+*@
+@*
+@{ var selection = Model.Content.Root().Children.Where(x => x.IsVisible()).ToArray(); }
+@if (selection.Length > 0)
+{
+ <nav class="navbar navbar-expand-lg navbar-light bg-light">
+     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+        @foreach (var item in selection)
+        {
+            <li class="@(item.IsAncestorOrSelf(Model.Content) ? "current" : null) nav-item">
+                <a class="nav-link" href="@item.Url">@item.Name</a>
+            </li>
+        }
+    </ul>
+    </div>
+</nav>
+}
+*@
+
+
+
+@*
+
+@{ var root = Model.Content.Root(); }
+@{ var selection = root.Children.Where(x => x.IsVisible()).ToArray(); }
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<ul class="navbar-nav mr-auto">  
+<li class="@((Model.Content.Name == root.Name) ? "text-white  bg-primary" : null) nav-item ">
+<a  class="nav-link" href="/">@root.Name</a>
+</li>
+@if (selection.Length > 0 ){ 
+foreach (var menuItem in selection) {
+    <li class="@((menuItem.Name == Model.Content.Name) ? "text-white  bg-primary" : null) nav-item ">
+@if (root.Children().Where(x => x.IsVisible()).Count() > 0) {
+
+<a href="@menuItem.Url">@menuItem.Name</a>
+
+foreach (var subItem in root.Children().Where(x => x.IsVisible()))
+{
+<a class="dropdown-item" href="@subItem.Url">@subItem.Name</a>
+} } else {
+<a class="dropdown-item" href="@menuItem.Url">@menuItem.Name</a> }                
+
+    </li>
+        }
+}
+</ul>
+</nav>
+@*
+@if (root.Children().Where(x => x.IsVisible()).Count() > 0) {
+
+<a href="@menuItem.Url">@menuItem.Name</a>
+
+foreach (var subItem in root.Children().Where(x => x.IsVisible()))
+{
+<a href="@subMenuItem.Url">@subMenuItem.Name</a>
+} } else 
+{
+<a href="@selection.Url">@selection.Name</a> 
+}                
+
+
+@{
+	var selection = Umbraco.Content(Guid.Parse("c49e7cd0-a91e-41b8-9f36-0aa0dcab82b2"))
+    .ChildrenOfType("projectItem")
+    .Where(x => x.IsVisible());
+}
+<ul>
+	@foreach (var item in selection)
+	{
+		<li>
+			<a href="@item.Url">@item.Name</a>
+		</li>
+	}
+</ul>
+
+
+
+@*
+@if (mainItem.Children().Where(x => x.IsVisible()).Count() > 0) {
+<a href="@item.Url">@item.Name</a>
+foreach (var subItem in mainItem.Children().Where(x => x.IsVisible()))
+{
+<a href="@subMenuItem.Url">@subMenuItem.Name</a>
+} } else {
+<a href="@item.Url">@item.Name</a> }  }              
+
+
+
+@*
+@if (mainItem.Children().Where(x => x.IsVisible()).Count() > 0) {
+<a href="@item.Url">@item.Name</a>
+foreach (var subItem in mainItem.Children().Where(x => x.IsVisible()))
+{
+<a href="@subMenuItem.Url">@subMenuItem.Name</a>
+}
+}
+else 
+{
+<a href="@item.Url">@item.Name</a> 
+}
+
+@*
+@{ var currentNode = UmbracoContext.PublishedRequest.PublishedContent;
+    var site = currentNode.Root();
+    var selection = site.Children.Where(x => x.IsVisible());
+
+}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            @foreach (var item in selection)
+             {
+                var nullCheck = item.Children;
+                if (item.Children.Any() && nullCheck != null)
+                {
+                    <li class="nav-item dropdown ">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" href="@item.Url" data-hover="dropdown"
+                           aria-haspopup="true" aria-expanded="false">@item.Name</a>
+                        <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+                            @foreach (var subClass in item.Children)
+                            {
+                                if (Umbraco.MemberHasAccess(subClass.Path))
+                                {
+                                    <a class="dropdown-item" href="@subClass.Url">@subClass.Name</a>
+                                }
+                            }
+                        </div>
+                    </li>
+
+                }
+                else
+                {
+
+                <li class="nav-item active">
+                    <a class="nav-link @(item.IsAncestorOrSelf(Model) ? "nav-link--active" : null)" href="@item.Url">@item.Name<span class="sr-only">(current)</span></a>
+                </li>
+                }
+             }
+
+        </ul>
+
+    </div>
+</nav>
+*@
+<style>
+    .dropdown-menu{
+        opacity:0;
+        transition: all 0.2s linear;
+        display:block;
+       
+    }
+    .dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+    transition: all 0.2s linear;
+    opacity: 1;
+ }
+</style>

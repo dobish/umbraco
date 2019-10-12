@@ -1,0 +1,36 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@using Umbraco.Web
+
+
+
+
+<ul>
+    @{
+//int numOfProjects= Convert.ToUInt16(Model.MacroParameters["numOfProjects"]);
+//var root = Model.Content.Root();
+//var items = root.FirstChildOfType("projectsOverview").Children().Where(x => x.HasValue("projectStatus") && x.GetProperty("projectStatus").Value<string>() == "Completed").OrderByDescending(x => x.CreateDate).Take(2);
+    }
+</ul>
+
+ 
+
+
+
+@{
+    var root = Model.Content.Root();
+	var selection = root.FirstChildOfType("projectsOverview")
+    .Children("projectOverview")
+    .Where(x => x.HasValue("projectStatus") && x.GetProperty("projectStatus").Value<string>() == "Completed")
+    .OrderBy(x => x.CreateDate);
+}
+<div class="mx-auto">
+    <p>Completed projects:</p>
+<ul class="list-group list-group-horizontal-md">
+	@foreach (var item in selection)
+	{
+		<li class="list-group-item">
+			<a href="@item.Url">@item.Name</a>
+		</li>
+	}
+</ul>
+</div>

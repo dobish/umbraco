@@ -1,0 +1,39 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.Members>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@using Umbraco.Core.Services;
+@using Newtonsoft.Json;
+@{
+	Layout = "Master.cshtml";
+}
+
+@{
+    IMemberService memberService = Services.MemberService;
+    var members = memberService.GetMembersByGroup("Active");
+}
+
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+        <th scope="col">Image</th>
+      <th scope="col">Name</th>
+      <th scope="col">Address</th>
+      <th scope="col">City</th>
+      <th scope="col">Mail</th>
+      <th scope="col">Skills</th>
+    </tr>
+  </thead>
+  <tbody>
+         @foreach (var member in members)
+        {
+    <tr>
+        <td>@member.Name</td>
+      <td>@member.Name</td>
+      <td>@member.GetValue("address")</td>
+      <td>@member.GetValue("zip") @member.GetValue("city")</td>
+      <td>@member.Email</td>
+      <td>@member.GetValue("skills")</td>
+       
+    </tr>
+    }
+       
